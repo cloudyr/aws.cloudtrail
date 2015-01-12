@@ -1,0 +1,4 @@
+exportPattern("^[[:alpha:]]+")
+import(aws.signature)
+import(httr)
+importFrom(jsonlite, fromJSON, toJSON)

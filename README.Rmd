@@ -1,0 +1,50 @@
+# AWS CloudTrail Client Package #
+
+**aws.cloudtrail** is a simple client package for the Amazon Web Services [AWS CloudTrail](http://aws.amazon.com/awscloudtrail/) REST API, which can be used to monitor use of AWS web services API calls.
+
+## Installation ##
+
+[![Build Status](https://travis-ci.org/leeper/aws.cloudtrail.png?branch=master)](https://travis-ci.org/leeper/aws.cloudtrail)
+
+To install the latest development version from GitHub, run the following:
+
+```R
+if(!require("devtools")){
+    install.packages("devtools")
+    library("devtools")
+}
+install_github("cloudyr/aws.cloudtrail")
+```
+
+To install the latest version from CRAN, simply use `install.packages("aws.cloudtrail")`.
+```
+
+## Code Examples ##
+
+A CloudTrail is a log of API calls made to AWS. The service is incredibly easy to use. It simply requires creating a trail that defines where (i.e., in what AWS S3 bucket) the CloudTrail log should be stored:
+
+```R
+trail <- create_trail(name = "NewTrail", bucket = "MyBucket")
+```
+
+Once a trail is created, it can be updated (e.g., to move it to a different bucket, to activate event notifications using SNS, etc.) using `update_trail`.
+
+ADD UPDATE EXAMPLE HERE
+
+It is easy to start logging requests using `start_logging` and stop logging using `stop_logging`:
+
+```R
+start_logging(trail$Name)
+trail_status(trail$Name)$IsLogging # check logging status
+stop_logging(trail$Name)
+```
+
+If you're done with a trail, you can delete it and it will no longer show up in your trail list:
+
+```R
+delete_trail(trail$Name)
+get_trails()
+```
+
+---
+[![cloudyr project logo](http://i.imgur.com/JHS98Y7.png)](https://github.com/cloudyr)
