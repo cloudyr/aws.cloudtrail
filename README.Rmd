@@ -8,7 +8,7 @@
 
 To install the latest development version from GitHub, run the following:
 
-```{R}
+```R
 if(!require("devtools")){
     install.packages("devtools")
     library("devtools")
@@ -23,8 +23,16 @@ To install the latest version from CRAN, simply use `install.packages("aws.cloud
 
 A CloudTrail is a log of API calls made to AWS. The service is incredibly easy to use. It simply requires creating a trail that defines where (i.e., in what AWS S3 bucket) the CloudTrail log should be stored.
 
-```{R}
-trail <- create_trail(name = "NewTrail", bucket = "MyBucket")
+To use CloudTrail, start by creating an S3 bucket. This can be done using the **aws.s3** package:
+
+```{r}
+library("aws.cloudtrail")
+library("aws.s3")
+putbucket("MyExampleBucket")
+```
+
+```{r}
+trail <- create_trail(name = "NewTrail", bucket = "MyExampleBucket")
 get_trails() # see trail in list of trails
 ```
 
@@ -32,9 +40,10 @@ Note: The s3 bucket should exist (perhaps created using **aws.s3**) and have wri
 
 Once a trail is created, it can be updated (e.g., to move it to a different bucket, to activate event notifications using SNS, etc.) using `update_trail()`.
 
-```{R}
+```{r}
 # move trail to another bucket
-update_trail(name = "NewTrail", bucket = "OtherBucket")
+putbucket("MyOtherExampleBucket")
+update_trail(name = "NewTrail", bucket = "MyOtherExampleBucket")
 
 # send SNS notifications when log updated
 update_trail(name = "NewTrail", sns_topic = "arn:aws:sns:us-east-1:123456789012:My-Topic")
@@ -45,7 +54,7 @@ update_trail(name = "NewTrail", global = TRUE)
 
 Once created and configured, it is easy to start logging requests using `start_logging()` and stop logging using `stop_logging()`:
 
-```{R}
+```{r}
 start_logging(trail$Name)
 trail_status(trail$Name)$IsLogging # check logging status
 stop_logging(trail$Name)
@@ -53,7 +62,7 @@ stop_logging(trail$Name)
 
 If you're done with a trail, you can delete it and it will no longer show up in your trail list:
 
-```{R}
+```{r}
 delete_trail(trail$Name)
 get_trails()
 ```

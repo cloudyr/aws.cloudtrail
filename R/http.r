@@ -30,7 +30,7 @@ cloudtrailHTTP <- function(query, body = NULL, region, key, secret, ...) {
         x <- try(fromJSON(content(r, "text"))$Error, silent = TRUE)
         warn_for_status(r)
         h <- headers(r)
-        out <- structure(x, headers = h, class = "aws_error")
+        out <- structure(x, headers = h, class = "aws-error")
         attr(out, "request_canonical") <- S$CanonicalRequest
         attr(out, "request_string_to_sign") <- S$StringToSign
         attr(out, "request_signature") <- S$SignatureHeader

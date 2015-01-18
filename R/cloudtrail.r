@@ -60,7 +60,7 @@ delete_trail <- function(name, ...) {
     out <- cloudtrailHTTP(query = list(Action = "DeleteTrail", Name = name), ...)
     if(inherits(out, "aws-error"))
         return(out)
-    structure(list(), RequestId = out$DeleteTrailResponse$ResponseMetadata$RequestId)
+    structure(TRUE, RequestId = out$DeleteTrailResponse$ResponseMetadata$RequestId)
 }
 
 get_trails <- function(...) {
@@ -83,12 +83,12 @@ start_logging <- function(name, ...) {
     out <- cloudtrailHTTP(query = list(Action = "StartLogging", Name = name), ...)
     if(inherits(out, "aws-error"))
         return(out)
-    structure(list(), RequestId = out$StartLoggingResponse$ResponseMetadata$RequestId)
+    structure(TRUE, RequestId = out$StartLoggingResponse$ResponseMetadata$RequestId)
 }
 
 stop_logging <- function(name, ...) {
     out <- cloudtrailHTTP(query = list(Action = "StopLogging", Name = name), ...)
     if(inherits(out, "aws-error"))
         return(out)
-    structure(list(), RequestId = out$StopLoggingResponse$ResponseMetadata$RequestId)
+    structure(TRUE, RequestId = out$StopLoggingResponse$ResponseMetadata$RequestId)
 }
