@@ -14,7 +14,9 @@ after_failure:
     on_failure: change
 after_success:
 - Rscript -e 'library("covr");codecov()'
-- test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && bash drat.sh
+- test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && bash
+  drat.sh
 env:
   global:
   - secure: QjLE7p4K9nxr+BzayaMOYPC6wNyNE3fgwSMctS+Cvijr3kAWxyR0zd05FxIQEpiHuzF7zjMC35QohdjD8vWmxISuPfInt3V6G+D8KcrJgJgkyd7Y0onQ7dT3XJ3s6F5ylY/7oKs0837uuUslIjRP5VzboITVDuhKpKNKCrlf40E=
+  - secure: jpgPMIhRfLyQz9TL3fBs/ywZgIa51z2t7vmK8KJWzV+HgfnNmVqEgSAlYuMZ7/wAMonSrem4rIcDpJ1e44QEFSQQ/I9or9dx75fWJln5a39qvE7xVxIbrHvgWXnaB1eyr3eQmSdH7oVQFv6XEkB7/V/wYHQXL7MhZyha/LmyugA=
