@@ -1,3 +1,7 @@
+#' @import httr
+#' @importFrom aws.signature signature_v4_auth
+#' @importFrom jsonlite fromJSON
+#' @export
 cloudtrailHTTP <- function(query, 
                            body = NULL, 
                            region = Sys.getenv("AWS_DEFAULT_REGION","us-east-1"), 
@@ -6,7 +10,7 @@ cloudtrailHTTP <- function(query,
                            ...) {
     url <- paste0("https://cloudtrail.",region,".amazonaws.com")
     d_timestamp <- format(Sys.time(), "%Y%m%dT%H%M%SZ", tz = "UTC")
-    if(key == "") {
+    if (key == "") {
         H <- add_headers(`x-amz-date` = d_timestamp)
     } else {
         S <- signature_v4_auth(
@@ -25,7 +29,7 @@ cloudtrailHTTP <- function(query,
                          Authorization = S$SignatureHeader)
     }
     r <- POST(url, H, query = query, ...)
-    if(http_status(r)$category == "client error") {
+    if (http_status(r)$category == "client error") {
         x <- try(fromJSON(content(r, "text"))$Error, silent = TRUE)
         warn_for_status(r)
         h <- headers(r)
