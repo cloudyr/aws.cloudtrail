@@ -16,5 +16,8 @@ A simple client package for the Amazon Web Services AWS CloudTrail REST API.
 \author{
 Thomas J. Leeper <thosjleeper@gmail.com>
 }
+\references{
+\url{http://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html}
+}
 \keyword{package}
 

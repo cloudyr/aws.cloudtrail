@@ -1,5 +1,4 @@
 #' @importFrom jsonlite toJSON fromJSON
-#' @export
 cloudtrail_s3policy <- function(bucket, account_id, prefix = NULL) {
 toJSON(fromJSON(paste0('{
   "Version": "2012-10-17",

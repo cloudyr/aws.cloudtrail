@@ -1,3 +1,16 @@
+#' @title cloudtrailHTTP
+#' @description AWS Cloudtrail API Requests
+#' @details This is the workhorse function for executing Cloudtrail API requests. It is typically not necessary to call this function directly.
+#' @param query A list.
+#' @param body The body of the request.
+#' @param region A character string containing the AWS region.
+#' If missing, defaults to \dQuote{us-east-1}.
+#' @param key A character string containing an AWS Access Key ID. 
+#' If missing, defaults to value stored in environment variable \dQuote{AWS_ACCESS_KEY_ID}.
+#' @param secret A character string containing an AWS Secret Access Key. 
+#' If missing, defaults to value stored in environment variable \dQuote{AWS_SECRET_ACCESS_KEY}.
+#' @param \dots Additional arguments passed to \code{\link[httr]{POST}}.
+#' @return A list.
 #' @import httr
 #' @importFrom aws.signature signature_v4_auth
 #' @importFrom jsonlite fromJSON
