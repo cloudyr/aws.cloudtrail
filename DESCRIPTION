@@ -12,6 +12,8 @@ Imports:
     httr,
     jsonlite,
     aws.signature
+Suggests:
+    testthat
 URL: https://github.com/cloudyr/aws.cloudtrail
 BugReports: https://github.com/cloudyr/aws.cloudtrail/issues
 RoxygenNote: 5.0.1.9000
