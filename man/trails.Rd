@@ -16,7 +16,7 @@ update_trail(name, bucket = NULL, log_group = NULL, log_role = NULL,
 delete_trail(name, ...)
 }
 \arguments{
-\item{name}{A character string specifying the name of a Cloudtrail or the ARN for a Cloudtrail.}
+\item{name}{A character string specifying the name of a Cloudtrail or the ARN for a Cloudtrail, or an object of class \dQuote{aws_cloudtrail}.}
 
 \item{bucket}{A character string specifying the name of an S3 bucket to deposit Cloudtrail logs into. AWS recommends this be a dedicated bucket exclusively for Cloudtrail logs. In order to succeed, the bucket must have an appropriate policy (see \href{http://docs.aws.amazon.com/awscloudtrail/latest/userguide/create-s3-bucket-policy-for-cloudtrail.html}{documentation}).}
 
@@ -49,12 +49,28 @@ Create, update, or delete a Cloudtrail
 }
 \examples{
 \dontrun{
-trail <- create_trail("exampletrail", "mys3bucket")
-start_logging("exampletrail")
-stop_logging("exampletrail")
-trail_status("exampletrail")
-delete_trail("exampletrail")
-get_trails()
+  require("aws.s3")
+  # create a bucket
+  mybucket <- "mycloudtrailbucket"
+  stopifnot(put_bucket(mybucket))
+  # set bucket policy for CloudTrail
+  ctpolicy <- cloudtrail_s3policy(mybucket, "my_aws_id")
+  stopifnot(put_bucket_policy(mybucket, policy = ctpolicy))
+  
+  # create a trail
+  trail <- create_trail("exampletrail", mybucket)
+  # confirm trail created
+  get_trails()
+
+  # start/stop logging to the trail
+  start_logging(trail)
+  stop_logging(trail)
+  
+  # check trail status
+  trail_status(trail)
+  
+  # delete trail
+  delete_trail(trail)
 }
 }
 \references{

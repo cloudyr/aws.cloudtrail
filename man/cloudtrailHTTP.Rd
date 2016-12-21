@@ -4,23 +4,28 @@
 \alias{cloudtrailHTTP}
 \title{cloudtrailHTTP}
 \usage{
-cloudtrailHTTP(query, body = NULL, region = Sys.getenv("AWS_DEFAULT_REGION",
-  "us-east-1"), key = Sys.getenv("AWS_ACCESS_KEY_ID"),
-  secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), ...)
+cloudtrailHTTP(query, body = NULL, headers = list(),
+  version = "2013-11-01", region = Sys.getenv("AWS_DEFAULT_REGION"),
+  key = Sys.getenv("AWS_ACCESS_KEY_ID"),
+  secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"),
+  session_token = Sys.getenv("AWS_SESSION_TOKEN"), ...)
 }
 \arguments{
 \item{query}{A list.}
 
 \item{body}{The body of the request.}
 
-\item{region}{A character string containing the AWS region.
-If missing, defaults to \dQuote{us-east-1}.}
+\item{headers}{A list of headers to pass to the REST request.}
 
-\item{key}{A character string containing an AWS Access Key ID. 
-If missing, defaults to value stored in environment variable \dQuote{AWS_ACCESS_KEY_ID}.}
+\item{version}{A character string specifying the API version.}
 
-\item{secret}{A character string containing an AWS Secret Access Key. 
-If missing, defaults to value stored in environment variable \dQuote{AWS_SECRET_ACCESS_KEY}.}
+\item{region}{A character string containing the AWS region. If missing, defaults to the value of environment variable \samp{AWS_DEFAULT_REGION}.}
+
+\item{key}{A character string containing an AWS Access Key ID. If missing, defaults to value stored in environment variable \dQuote{AWS_ACCESS_KEY_ID}.}
+
+\item{secret}{A character string containing an AWS Secret Access Key. If missing, defaults to value stored in environment variable \dQuote{AWS_SECRET_ACCESS_KEY}.}
+
+\item{session_token}{Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \dQuote{AWS_SESSION_TOKEN}.}
 
 \item{\dots}{Additional arguments passed to \code{\link[httr]{POST}}.}
 }

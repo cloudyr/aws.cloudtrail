@@ -7,7 +7,7 @@
 trail_status(name, ...)
 }
 \arguments{
-\item{name}{A character string specifying the name of a Cloudtrail or the ARN for a Cloudtrail.}
+\item{name}{A character string specifying the name of a Cloudtrail or the ARN for a Cloudtrail, or an object of class \dQuote{aws_cloudtrail}.}
 
 \item{\dots}{Additional arguments passed to \code{\link{cloudtrailHTTP}}.}
 }
@@ -19,15 +19,6 @@ Get trail status/history
 }
 \details{
 This function returns full details and history for a trail, including errors and logging start/stop times.
-}
-\examples{
-\dontrun{
-trail <- create_trail("exampletrail", "mys3bucket")
-start_logging("exampletrail")
-stop_logging("exampletrail")
-trail_status("exampletrail")
-delete_trail("exampletrail")
-}
 }
 \references{
 \url{http://docs.aws.amazon.com/awscloudtrail/latest/APIReference/API_GetTrailStatus.html}

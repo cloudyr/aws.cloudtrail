@@ -5,6 +5,8 @@ r_packages:
 - knitr
 - covr
 - drat
+r_github_packages:
+- cloudyr/aws.s3
 after_failure:
   email:
     recipients:

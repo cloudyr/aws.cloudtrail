@@ -20,13 +20,30 @@
 #' @references \url{http://docs.aws.amazon.com/awscloudtrail/latest/APIReference/API_CreateTrail.html}
 #' @examples
 #' \dontrun{
-#' trail <- create_trail("exampletrail", "mys3bucket")
-#' start_logging("exampletrail")
-#' stop_logging("exampletrail")
-#' trail_status("exampletrail")
-#' delete_trail("exampletrail")
-#' get_trails()
+#'   require("aws.s3")
+#'   # create a bucket
+#'   mybucket <- "mycloudtrailbucket"
+#'   stopifnot(put_bucket(mybucket))
+#'   # set bucket policy for CloudTrail
+#'   ctpolicy <- cloudtrail_s3policy(mybucket, "my_aws_id")
+#'   stopifnot(put_bucket_policy(mybucket, policy = ctpolicy))
+#'   
+#'   # create a trail
+#'   trail <- create_trail("exampletrail", mybucket)
+#'   # confirm trail created
+#'   get_trails()
+#' 
+#'   # start/stop logging to the trail
+#'   start_logging(trail)
+#'   stop_logging(trail)
+#'   
+#'   # check trail status
+#'   trail_status(trail)
+#'   
+#'   # delete trail
+#'   delete_trail(trail)
 #' }
+#' @importFrom aws.s3 get_bucketname
 #' @export
 create_trail <- 
 function(name, bucket, 
@@ -39,8 +56,8 @@ function(name, bucket,
          kms = NULL,
          ...) {
     query_args <- list(Action = "CreateTrail")
-    query_args$Name <- name
-    query_args$S3BucketName <- bucket
+    query_args$Name <- get_trailname(name)
+    query_args$S3BucketName <- get_bucketname(bucket)
     if (!is.null(log_group)) {
         query_args$CloudWatchLogsLogGroupArn <- log_group
     }
@@ -48,10 +65,10 @@ function(name, bucket,
         query_args$CloudWatchLogsRoleArn <- log_role
     }
     if (!is.null(global)) {
-        query_args$IncludeGlobalServiceEvents <- global
+        query_args$IncludeGlobalServiceEvents <- tolower(global)
     }
     if (!is.null(multi_region)) {
-        query_args$IsMultiRegionTrail <- multi_region
+        query_args$IsMultiRegionTrail <- tolower(multi_region)
     }
     if (!is.null(key_prefix)) {
         if (nchar(key_prefix) > 200) {
@@ -60,7 +77,7 @@ function(name, bucket,
         query_args$S3KeyPrefix <- key_prefix
     }
     if (!is.null(sns_topic)) {
-        query_args$SnsTopicName <- sns_topic
+        query_args$SnsTopicName <- as.character(sns_topic)
     }
     if (!is.null(kms)) {
         query_args$KmsKeyId <- kms
@@ -87,9 +104,9 @@ function(name,
          sns_topic = NULL,
          ...) {
     query_args <- list(Action = "UpdateTrail")
-    query_args$Name <- name
+    query_args$Name <- get_trailname(name)
     if (!is.null(bucket)) {
-        query_args$S3BucketName <- bucket
+        query_args$S3BucketName <- get_bucketname(bucket)
     }
     if (!is.null(log_group)) {
         query_args$CloudWatchLogsLogGroupArn <- log_group
@@ -98,13 +115,13 @@ function(name,
         query_args$CloudWatchLogsRoleArn <- log_role
     }
     if (!is.null(global)) {
-        query_args$IncludeGlobalServiceEvents <- global
+        query_args$IncludeGlobalServiceEvents <- tolower(global)
     }
     if (!is.null(key_prefix)) {
         query_args$S3KeyPrefix <- key_prefix
     }
     if (!is.null(sns_topic)) {
-        query_args$SnsTopicName <- sns_topic
+        query_args$SnsTopicName <- as.character(sns_topic)
     }
     out <- cloudtrailHTTP(query = query_args, ...)
     if (inherits(out, "aws-error")) {
@@ -119,7 +136,7 @@ function(name,
 #' @references \url{http://docs.aws.amazon.com/awscloudtrail/latest/APIReference/API_DeleteTrail.html}
 #' @export
 delete_trail <- function(name, ...) {
-    out <- cloudtrailHTTP(query = list(Action = "DeleteTrail", Name = name), ...)
+    out <- cloudtrailHTTP(query = list(Action = "DeleteTrail", Name = get_trailname(name)), ...)
     if (inherits(out, "aws-error")) {
         return(out)
     }
@@ -156,17 +173,9 @@ get_trails <- function(...) {
 #' @return A list.
 #' @seealso \code{\link{get_trails}}, \code{\link{start_logging}}, \code{\link{create_trail}}
 #' @references \url{http://docs.aws.amazon.com/awscloudtrail/latest/APIReference/API_GetTrailStatus.html}
-#' @examples
-#' \dontrun{
-#' trail <- create_trail("exampletrail", "mys3bucket")
-#' start_logging("exampletrail")
-#' stop_logging("exampletrail")
-#' trail_status("exampletrail")
-#' delete_trail("exampletrail")
-#' }
 #' @export
 trail_status <- function(name, ...) {
-    out <- cloudtrailHTTP(query = list(Action = "GetTrailStatus", Name = name), ...)
+    out <- cloudtrailHTTP(query = list(Action = "GetTrailStatus", Name = get_trailname(name)), ...)
     if (inherits(out, "aws-error")) {
         return(out)
     }
@@ -184,15 +193,29 @@ trail_status <- function(name, ...) {
 #' @references \url{http://docs.aws.amazon.com/awscloudtrail/latest/APIReference/API_StartLogging.html}, \url{http://docs.aws.amazon.com/awscloudtrail/latest/APIReference/API_StopLogging.html}
 #' @examples
 #' \dontrun{
-#' trail <- create_trail("exampletrail", "mys3bucket")
-#' start_logging("exampletrail")
-#' stop_logging("exampletrail")
-#' trail_status("exampletrail")
-#' delete_trail("exampletrail")
+#'   require("aws.s3")
+#'   # create a bucket
+#'   mybucket <- "mybucket_for_cloudtrail"
+#'   stopifnot(put_bucket(mybucket))
+#'   
+#'   # create a trail
+#'   trail <- create_trail("exampletrail", mybucket)
+#'   # confirm trail created
+#'   get_trails()
+#' 
+#'   # start/stop logging to the trail
+#'   start_logging(trail)
+#'   stop_logging(trail)
+#'   
+#'   # check trail status
+#'   trail_status(trail)
+#'   
+#'   # delete trail
+#'   delete_trail(trail)
 #' }
 #' @export
 start_logging <- function(name, ...) {
-    out <- cloudtrailHTTP(query = list(Action = "StartLogging", Name = name), ...)
+    out <- cloudtrailHTTP(query = list(Action = "StartLogging", Name = get_trailname(name)), ...)
     if (inherits(out, "aws-error")) {
         return(out)
     }
@@ -202,7 +225,7 @@ start_logging <- function(name, ...) {
 #' @rdname logging
 #' @export
 stop_logging <- function(name, ...) {
-    out <- cloudtrailHTTP(query = list(Action = "StopLogging", Name = name), ...)
+    out <- cloudtrailHTTP(query = list(Action = "StopLogging", Name = get_trailname(name)), ...)
      if (inherits(out, "aws-error")) {
         return(out)
     }

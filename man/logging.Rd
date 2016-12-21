@@ -10,7 +10,7 @@ start_logging(name, ...)
 stop_logging(name, ...)
 }
 \arguments{
-\item{name}{A character string specifying the name of a Cloudtrail or the ARN for a Cloudtrail.}
+\item{name}{A character string specifying the name of a Cloudtrail or the ARN for a Cloudtrail, or an object of class \dQuote{aws_cloudtrail}.}
 
 \item{\dots}{Additional arguments passed to \code{\link{cloudtrailHTTP}}.}
 }
@@ -22,11 +22,25 @@ Start/stop logging
 }
 \examples{
 \dontrun{
-trail <- create_trail("exampletrail", "mys3bucket")
-start_logging("exampletrail")
-stop_logging("exampletrail")
-trail_status("exampletrail")
-delete_trail("exampletrail")
+  require("aws.s3")
+  # create a bucket
+  mybucket <- "mybucket_for_cloudtrail"
+  stopifnot(put_bucket(mybucket))
+  
+  # create a trail
+  trail <- create_trail("exampletrail", mybucket)
+  # confirm trail created
+  get_trails()
+
+  # start/stop logging to the trail
+  start_logging(trail)
+  stop_logging(trail)
+  
+  # check trail status
+  trail_status(trail)
+  
+  # delete trail
+  delete_trail(trail)
 }
 }
 \references{
