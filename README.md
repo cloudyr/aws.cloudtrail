@@ -76,10 +76,18 @@ update_trail(name = "NewTrail", global = TRUE)
 
 Once created and configured, it is easy to start logging requests using `start_logging()` and stop logging using `stop_logging()`:
 
-```{r}
+```R
 start_logging(trail)
 trail_status(trail)$IsLogging # check logging status
 stop_logging(trail)
+```
+
+The log is simply an S3 object, saved in the named bucket. We can check for logs using `get_bucket()` and retrieve one of the logs as a data frame using `get_object()`:
+
+```R
+(objects <- get_bucket(otherbucket))
+mylog <- rawConnection(get_object(objects[[2]]))
+jsonlite::fromJSON(mylog)
 ```
 
 If you're done with a trail, you can delete it and it will no longer show up in your trail list:
