@@ -49,4 +49,3 @@ Start/stop logging
 \seealso{
 \code{\link{create_trail}}, \code{\link{trail_status}}
 }
-

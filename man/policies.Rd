@@ -24,4 +24,3 @@ A character string containing the policy
 \description{
 Construct an S3 or SNS policy document for use with CloudTrail
 }
-

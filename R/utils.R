@@ -1,3 +1,4 @@
+#' @export
 print.aws_cloudtrail <- function(x, ...) {
     cat("Name:    ", x[["Name"]], "\n")
     cat("Arn:     ", x[["TrailARN"]], "\n")

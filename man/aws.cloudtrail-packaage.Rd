@@ -2,10 +2,10 @@
 % Please edit documentation in R/aws.cloudtrail-package.R
 \docType{package}
 \name{aws.cloudtrail-packaage}
-\alias{aws.cloudtrail}
 \alias{aws.cloudtrail-packaage}
-\alias{aws.cloudtrail-packaage-package}
 \alias{aws.cloudtrail-package}
+\alias{aws.cloudtrail}
+\alias{aws.cloudtrail-packaage-package}
 \title{aws.cloudtrail}
 \description{
 AWS CloudTrail Client Package
@@ -13,11 +13,10 @@ AWS CloudTrail Client Package
 \details{
 A simple client package for the Amazon Web Services AWS CloudTrail REST API.
 }
-\author{
-Thomas J. Leeper <thosjleeper@gmail.com>
-}
 \references{
 \url{http://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html}
 }
+\author{
+Thomas J. Leeper <thosjleeper@gmail.com>
+}
 \keyword{package}
-

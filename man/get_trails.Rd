@@ -29,4 +29,3 @@ get_trails()
 \seealso{
 \code{\link{create_trail}}
 }
-

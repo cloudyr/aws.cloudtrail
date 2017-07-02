@@ -2,8 +2,8 @@
 % Please edit documentation in R/cloudtrail.R
 \name{create_trail}
 \alias{create_trail}
-\alias{delete_trail}
 \alias{update_trail}
+\alias{delete_trail}
 \title{Trails}
 \usage{
 create_trail(name, bucket, log_group = NULL, log_role = NULL,
@@ -83,4 +83,3 @@ Create, update, or delete a Cloudtrail
 \seealso{
 \code{\link{get_trails}}, \code{\link{trail_status}}, \code{\link{start_logging}}
 }
-

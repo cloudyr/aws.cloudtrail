@@ -26,4 +26,3 @@ This function returns full details and history for a trail, including errors and
 \seealso{
 \code{\link{get_trails}}, \code{\link{start_logging}}, \code{\link{create_trail}}
 }
-
