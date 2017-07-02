@@ -20,10 +20,10 @@ function(query,
          body = NULL, 
          headers = list(),
          version = "2013-11-01",
-         region = Sys.getenv("AWS_DEFAULT_REGION"), 
-         key = Sys.getenv("AWS_ACCESS_KEY_ID"), 
-         secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), 
-         session_token = Sys.getenv("AWS_SESSION_TOKEN"),
+         region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"), 
+         key = NULL, 
+         secret = NULL, 
+         session_token = NULL,
          ...) {
     if (region == "") {
         region <- "us-east-1"
@@ -41,7 +41,9 @@ function(query,
            canonical_headers = list(host = paste0("cloudtrail.",region,".amazonaws.com"),
                                     `x-amz-date` = d_timestamp),
            request_body = "",
-           key = key, secret = secret)
+           key = key, 
+           secret = secret,
+           session_token = session_token)
     headers[["x-amz-date"]] <- d_timestamp
     headers[["x-amz-content-sha256"]] <- Sig$BodyHash
     if (!is.null(session_token) && session_token != "") {
@@ -52,14 +54,15 @@ function(query,
 
     r <- POST(url, H, query = query, ...)
     
-    if (http_status(r)$category == "Client error") {
+    if (http_error(r)) {
         x <- try(fromJSON(content(r, "text", encoding = "UTF-8"))$Error, silent = TRUE)
-        warn_for_status(r)
         h <- headers(r)
         out <- structure(x, headers = h, class = "aws_error")
         attr(out, "request_canonical") <- Sig$CanonicalRequest
         attr(out, "request_string_to_sign") <- Sig$StringToSign
         attr(out, "request_signature") <- Sig$SignatureHeader
+        print(str(out))
+        stop_for_status(r)
     } else {
         out <- try(fromJSON(content(r, "text", encoding = "UTF-8"), simplifyDataFrame = FALSE), silent = TRUE)
         if(inherits(out, "try-error"))
