@@ -1,3 +1,7 @@
+# CHANGES TO aws.cloudtrail 0.1.6
+
+* Update documentation and prepare for CRAN release.
+
 # CHANGES TO aws.cloudtrail 0.1.5
 
 * Update documentation.

@@ -1,6 +1,6 @@
 # AWS CloudTrail Client Package
 
-**aws.cloudtrail** is a simple client package for the Amazon Web Services (AWS) [CloudTrail](http://aws.amazon.com/awscloudtrail/) REST API, which can be used to monitor use of AWS web services API calls by logging API requests in an S3 bucket.
+**aws.cloudtrail** is a simple client package for the Amazon Web Services (AWS) [CloudTrail](https://aws.amazon.com/cloudtrail/) REST API, which can be used to monitor use of AWS web services API calls by logging API requests in an S3 bucket.
 
 To use the package, you will need an AWS account and to enter your credentials into R. Your keypair can be generated on the [IAM Management Console](https://aws.amazon.com/) under the heading *Access Keys*. Note that you only have access to your secret key once. After it is generated, you need to save it in a secure location. New keypairs can be generated at any time if yours has been lost, stolen, or forgotten. The [**aws.iam** package](https://github.com/cloudyr/aws.iam) profiles tools for working with IAM, including creating roles, users, groups, and credentials programmatically; it is not needed to *use* IAM credentials.
 

@@ -12,6 +12,7 @@
 #' @param \dots Additional arguments passed to \code{\link[httr]{POST}}.
 #' @return A list.
 #' @import httr
+#' @importFrom utils str
 #' @importFrom aws.signature signature_v4_auth
 #' @importFrom jsonlite fromJSON
 #' @export
