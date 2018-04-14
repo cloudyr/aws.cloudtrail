@@ -2,13 +2,14 @@
 #' @description AWS Cloudtrail API Requests
 #' @details This is the workhorse function for executing Cloudtrail API requests. It is typically not necessary to call this function directly.
 #' @param query A list.
+#' @param headers A list of headers to pass to the HTTP request.
 #' @param body The body of the request.
-#' @param headers A list of headers to pass to the REST request.
 #' @param version A character string specifying the API version.
-#' @param region A character string containing the AWS region. If missing, defaults to the value of environment variable \samp{AWS_DEFAULT_REGION}.
-#' @param key A character string containing an AWS Access Key ID. If missing, defaults to value stored in environment variable \dQuote{AWS_ACCESS_KEY_ID}.
-#' @param secret A character string containing an AWS Secret Access Key. If missing, defaults to value stored in environment variable \dQuote{AWS_SECRET_ACCESS_KEY}.
-#' @param session_token Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \dQuote{AWS_SESSION_TOKEN}.
+#' @param verbose A logical indicating whether to be verbose. Default is given by \code{options("verbose")}.
+#' @param region A character string containing the AWS region. If missing, defaults to \dQuote{us-east-1}.
+#' @param key A character string containing an AWS Access Key ID. See \code{\link[aws.signature]{locate_credentials}}.
+#' @param secret A character string containing an AWS Secret Access Key. See \code{\link[aws.signature]{locate_credentials}}.
+#' @param session_token A character string containing an AWS Session Token. See \code{\link[aws.signature]{locate_credentials}}.
 #' @param \dots Additional arguments passed to \code{\link[httr]{POST}}.
 #' @return A list.
 #' @import httr
@@ -17,18 +18,26 @@
 #' @importFrom jsonlite fromJSON
 #' @export
 cloudtrailHTTP <- 
-function(query, 
-         body = NULL, 
-         headers = list(),
-         version = "2013-11-01",
-         region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"), 
-         key = NULL, 
-         secret = NULL, 
-         session_token = NULL,
-         ...) {
-    if (region == "") {
-        region <- "us-east-1"
-    }
+function(
+  query, 
+  headers = list(),
+  body = NULL, 
+  version = "2013-11-01",
+  verbose = getOption("verbose", FALSE),
+  region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"), 
+  key = NULL, 
+  secret = NULL, 
+  session_token = NULL,
+  ...
+) {
+    # locate and validate credentials
+    credentials <- locate_credentials(key = key, secret = secret, session_token = session_token, region = region, verbose = verbose)
+    key <- credentials[["key"]]
+    secret <- credentials[["secret"]]
+    session_token <- credentials[["session_token"]]
+    region <- credentials[["region"]]
+    
+    # generate request signature
     url <- paste0("https://cloudtrail.",region,".amazonaws.com")
     d_timestamp <- format(Sys.time(), "%Y%m%dT%H%M%SZ", tz = "UTC")
     query <- c(query, Version = version)
@@ -44,19 +53,22 @@ function(query,
            request_body = "",
            key = key, 
            secret = secret,
-           session_token = session_token)
+           session_token = session_token,
+           verbose = verbose)
+    # setup request headers
     headers[["x-amz-date"]] <- d_timestamp
+    headers[["Authorization"]] <- Sig[["SignatureHeader"]]
     headers[["x-amz-content-sha256"]] <- Sig$BodyHash
     if (!is.null(session_token) && session_token != "") {
         headers[["x-amz-security-token"]] <- session_token
     }
-    headers[["Authorization"]] <- Sig[["SignatureHeader"]]
     H <- do.call(add_headers, headers)
-
+    
+    # execute request
     r <- POST(url, H, query = query, ...)
     
     if (http_error(r)) {
-        x <- try(fromJSON(content(r, "text", encoding = "UTF-8"))$Error, silent = TRUE)
+        x <- try(jsonlite::fromJSON(content(r, "text", encoding = "UTF-8"))$Error, silent = TRUE)
         h <- headers(r)
         out <- structure(x, headers = h, class = "aws_error")
         attr(out, "request_canonical") <- Sig$CanonicalRequest
@@ -65,7 +77,7 @@ function(query,
         print(str(out))
         stop_for_status(r)
     } else {
-        out <- try(fromJSON(content(r, "text", encoding = "UTF-8"), simplifyDataFrame = FALSE), silent = TRUE)
+        out <- try(jsonlite::fromJSON(content(r, "text", encoding = "UTF-8"), simplifyDataFrame = FALSE), silent = TRUE)
         if(inherits(out, "try-error"))
             out <- structure(content(r, "text", encoding = "UTF-8"), "unknown")
     }
